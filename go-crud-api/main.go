@@ -34,6 +34,7 @@ func deleteMovie(w http.ResponseWriter, r *http.Request) {
 	for index, item := range movies {
 		if item.ID == params["id"] {
 			movies = append(movies[:index], movies[index+1:]...)
+			json.NewEncoder(w).Encode(movies)
 			return
 		}
 	}
@@ -45,6 +46,7 @@ func getMovie(w http.ResponseWriter, r *http.Request) {
 	params := mux.Vars(r)
 	for _, item := range movies {
 		if item.ID == params["id"] {
+			fmt.Print("yolo")
 			json.NewEncoder(w).Encode(item)
 			return
 		}
@@ -79,11 +81,10 @@ func updateMovie(w http.ResponseWriter, r *http.Request) {
 func main() {
 	r := mux.NewRouter()
 	movies = append(movies, Movie{ID: "1", Director: &Director{Name: "John Smokes"}})
-	// fmt.Printf("%v", movies[0].Director.name)
 	r.HandleFunc("/", handleMovies).Methods("GET")
-	r.HandleFunc("/getmovie", getMovie).Methods("GET")
-	r.HandleFunc("/updatemovie", updateMovie).Methods("POST")
-	r.HandleFunc("/deletemovie", deleteMovie).Methods("DELETE")
+	r.HandleFunc("/getmovie/{id}", getMovie).Methods("GET")
+	r.HandleFunc("/updatemovie/{id}", updateMovie).Methods("POST")
+	r.HandleFunc("/deletemovie/{id}", deleteMovie).Methods("DELETE")
 	r.HandleFunc("/createmovie", newMovie).Methods("PUT")
 
 	fmt.Printf("Starting Server at 5001")
